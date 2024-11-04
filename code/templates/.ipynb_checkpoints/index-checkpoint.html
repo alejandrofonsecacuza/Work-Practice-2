@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cargar imagen</title>
+</head>
+
+<body>
+    <center>
+        <h1>Interface</h1>
+    </center>
+    <p>Connect with Neuronal Networks</p>
+    <form action="/procesar_imagen" method="POST" enctype="multipart/form-data">
+        <label for="imagen">Load Image</label>
+        <input type="file" name="image" id="imageInput" accept="image/*">
+        <br>
+        <br>
+        <img src="#" alt="" id="img_a" style="max-width: 100px; max-width: 100px;border: 2px solid black;">
+        <br>
+        <br>
+        <br>
+
+        <button type="button" onclick="submitImage()">Send</button>
+    </form>
+    <h4 class="label">Waiting...</h4>
+
+    <script defer>
+        document.getElementById('imageInput').addEventListener("change", function () {
+            var file = this.files[0];
+            var imageDisplay = document.getElementById("img_a")
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                imageDisplay.src = e.target.result;
+            }
+            reader.readAsDataURL(file)
+        })
+        async function submitImage() {
+            img = document.getElementById('imageInput').files[0]
+
+            const formData = new FormData();
+            formData.append('image', img)
+
+            const response = await fetch('/procesar_imagen', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json()
+
+            label = document.querySelector(".label")
+            if (result["predict"] == 0) {
+                resu = 'Circular'
+            } else if (result["predict"] == 1) {
+                resu = 'Alargada'
+            } else if (result["predict"] == 2) {
+                resu = 'Deformada'
+            }
+
+            label.textContent = "Predict:" + resu;
+
+        }
+
+    </script>
+
+
+
+
+
+
+
+    <!-- <script src="script.js"></script> -->
+</body>
+
+</html>
